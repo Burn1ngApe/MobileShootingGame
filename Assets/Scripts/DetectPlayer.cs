@@ -1,24 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class DetectPlayer : MonoBehaviour
 {
-    [SerializeField] private GameObject _player;
+    [Inject]
     private CharacterController _characterController;
-
-
-
-    private void Start()
-    {
-        _characterController = _player.GetComponent<CharacterController>();
-    }
-
-
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject == _player)
+        if(other.CompareTag("Player"))
         {
             _characterController.CharacterOnEnemyField();
         }
@@ -28,7 +20,7 @@ public class DetectPlayer : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject == _player)
+        if (other.CompareTag("Player"))
         {
             _characterController.CharacterOnBase();
         }

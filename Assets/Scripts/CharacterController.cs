@@ -6,7 +6,7 @@ using TMPro;
 
 public class CharacterController : Body
 {
-    [SerializeField] private CharacterShooting _characterShooting;
+    public CharacterShooting _characterShooting;
     [SerializeField] private CharacterMovement _characterMovement;
 
     [SerializeField] private GameObject _healthBarCanvas;

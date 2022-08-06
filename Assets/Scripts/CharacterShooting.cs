@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class CharacterShooting : MonoBehaviour
 {
     [SerializeField] private GameObject _gun, _bullet, _endOfTheGun;
     [SerializeField] private Animator _characterAnimator;
-    [SerializeField] private EnemyGeneral _enemyGeneral;
+
     [SerializeField] private CharacterMovement _characterMovement;
-    [SerializeField] private float _shootingDistance;
+    public float _shootingDistance;
+
+    private ObjectPool _objectPool;
 
     public enum AttackMode
     {
@@ -25,9 +28,16 @@ public class CharacterShooting : MonoBehaviour
     [SerializeField] private float _projectileAmount, _projectileOffset, _projectileSpeed, _projectileDeathTime;
 
 
+    private Vector3 _closestEnemyPosition = Vector3.zero;
+    private Vector3 _previousEnemyPosition = Vector3.zero;
+
+
+   [HideInInspector] public bool _enemyInSight = false;
 
     private void Start()
     {
+        _objectPool = GetComponent<ObjectPool>();
+
         _attackMode = AttackMode.Idle;
     }
 
@@ -42,19 +52,16 @@ public class CharacterShooting : MonoBehaviour
 
     private void Shooting()
     {
-        if(_attackMode == AttackMode.Attack && _enemyGeneral._enemies.Count != 0)
+        if(_attackMode == AttackMode.Attack)
         {
-            Vector3 enemyPoint = GetClosestEnemyPosition();
-            enemyPoint.y = 0;
-
-            if (enemyPoint.magnitude <= _shootingDistance)
+            if (_enemyInSight)
             {
                 //rotate character towards the enemy
                 _characterMovement._rotateToEnemy = true;
-                _characterMovement.RotateCharacter(-enemyPoint);
+                _characterMovement.RotateCharacter(-_closestEnemyPosition);
 
                 //shooting projectiles
-                if (Time.time > _generalTime && enemyPoint != null)
+                if (Time.time > _generalTime && _closestEnemyPosition != null)
                 {
                     _generalTime = Time.time + _timeBetweenAttacks;
                     ShootProjectiles();
@@ -73,48 +80,38 @@ public class CharacterShooting : MonoBehaviour
 
 
 
-    private Vector3 GetClosestEnemyPosition()
+    public void AngerPlayer(Vector3 dist, Vector3 enemyPosition)
     {
-        Vector3 enemyPosition = new Vector3();
+        var d = transform.position - _previousEnemyPosition;
 
-        for(int i =0; i < _enemyGeneral._enemies.Count; i++)
-        {           
-            var distance = transform.position - _enemyGeneral._enemies[i].transform.position;
-          
-            if(distance.magnitude <= enemyPosition.magnitude || enemyPosition.magnitude == 0)
-            {
-                enemyPosition = distance;
-            }          
+        if (_closestEnemyPosition.magnitude == 0 || dist.magnitude < d.magnitude)
+        {
+            _enemyInSight = true;
+
+            _closestEnemyPosition = dist;
+            _previousEnemyPosition = enemyPosition;
         }
-
-        return enemyPosition;
     }
 
 
 
     private void ShootProjectiles()
     {
+        _objectPool.CleanPool();
+
+
+
         //spawn multiple projectiles
         for (int i = 0; i < _projectileAmount; i++)
         {
-            //spawn projectile
-            var projectile = Instantiate(_bullet);
-
-            //set projectile position to the end of the gun
-            projectile.transform.position = _endOfTheGun.transform.position;
-
-            //change rotation of the projectile with little offset
+            //get rotation
             var newForward = transform.forward;
             newForward.x += Random.Range(-_projectileOffset, _projectileOffset);
 
-            projectile.transform.rotation = Quaternion.LookRotation(newForward);
+            var projPos = _endOfTheGun.transform.position;
+            var projRot = Quaternion.LookRotation(newForward);
 
-            //adding force to the projectile
-            var rb_projectile = projectile.GetComponent<Rigidbody>();
-            rb_projectile.AddForce(projectile.transform.forward * _projectileSpeed, ForceMode.Impulse);
-
-            //destroy projectile after certain time
-            Destroy(projectile, _projectileDeathTime);
+            _objectPool.GetObjectFromPool(projPos, projRot, _projectileSpeed);
         }
     }
 

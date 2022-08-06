@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class CharacterMovement : MonoBehaviour
 {
     [SerializeField] private Rigidbody _rb;
+
     [SerializeField] private FixedJoystick _joystick;
 
     [SerializeField] private float _moveSpeed, _rotationSpeed;

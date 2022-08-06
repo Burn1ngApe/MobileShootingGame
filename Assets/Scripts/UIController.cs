@@ -7,7 +7,7 @@ using TMPro;
 public class UIController : MonoBehaviour
 {
     [SerializeField] private GameObject _menu, _interface;
-    [SerializeField] private EnemyGeneral _enemyGeneral;
+    [SerializeField] private EnemyFactory _enemyGeneral;
     [SerializeField] private CharacterController _player;
 
     public Button _exitMenuButton;

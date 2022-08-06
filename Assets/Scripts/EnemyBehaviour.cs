@@ -1,19 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class EnemyBehaviour : Body
 {
-    [HideInInspector] public EnemyGeneral _enemyGeneral;
     [SerializeField] private int _gemDropChance;
     [SerializeField] private GameObject _gemInstance;
 
     [SerializeField] private float _sightRange, _attackRange, _moveSpeed;
 
     [SerializeField] private LayerMask _playerLM;
-    private bool _playerSpotted = false;
+
     [HideInInspector] public GameObject _player;
-    private CharacterController _characterController;
+    
+    [HideInInspector] public CharacterController _characterController;
+    [HideInInspector] public CharacterShooting _characterShooting;
+
 
     private Rigidbody _rb;
 
@@ -22,13 +23,11 @@ public class EnemyBehaviour : Body
     [SerializeField] private float _timeBetweenAttacks, _minDamage, _maxDamage;
     
 
-
-
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        _characterController = _player.GetComponent<CharacterController>();
     }
+
 
 
 
@@ -36,6 +35,25 @@ public class EnemyBehaviour : Body
     {
         var toPlayerDir = _player.transform.position - transform.position;
 
+        AngerPlayer(toPlayerDir);
+
+        InteractWithPlayer(toPlayerDir);
+    }
+
+
+
+    private void AngerPlayer(Vector3 toPlayerDir)
+    {
+        if (Physics.CheckSphere(transform.position, _characterShooting._shootingDistance, _playerLM))
+        {
+            _characterShooting.AngerPlayer(toPlayerDir, transform.position);
+        }
+    }
+
+
+
+    private void InteractWithPlayer(Vector3 toPlayerDir)
+    {
         Ray ray = new Ray(transform.position, toPlayerDir);
         RaycastHit hit;
 
@@ -109,7 +127,7 @@ public class EnemyBehaviour : Body
 
     private void Death()
     {
-        _enemyGeneral._enemies.Remove(gameObject);
+        _characterShooting._enemyInSight = false;
         DropGem();
         Destroy(gameObject);
     }
