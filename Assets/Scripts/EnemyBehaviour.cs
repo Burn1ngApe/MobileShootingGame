@@ -1,7 +1,7 @@
 using UnityEngine;
 using Zenject;
 
-public class EnemyBehaviour : Body
+public class EnemyBehaviour : Body, IEnemy
 {
     [SerializeField] private int _gemDropChance;
     [SerializeField] private GameObject _gemInstance;
@@ -94,6 +94,13 @@ public class EnemyBehaviour : Body
 
             _characterController.TakeDamage(randomDamage);
         }
+    }
+
+
+
+    public void SendDamage(float damage)
+    {
+        TakeDamage(damage);
     }
 
 

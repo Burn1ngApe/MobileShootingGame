@@ -9,11 +9,10 @@ public class BulletBehaviour : MonoBehaviour, ISpawnable
 
     private void OnTriggerEnter(Collider other)
     {
-        var enemy = other.gameObject;
 
-        if (enemy.CompareTag("Enemy"))
+        if (other.GetComponent<IEnemy>() != null)
         {
-           DestroyObject(enemy);
+           DestroyObject(other.gameObject);
         }
     }
 
@@ -36,7 +35,7 @@ public class BulletBehaviour : MonoBehaviour, ISpawnable
 
     public void DestroyObject(GameObject enemy)
     {
-        enemy.GetComponent<EnemyBehaviour>().TakeDamage(_damage);
+        enemy.GetComponent<IEnemy>().SendDamage(_damage);
 
         gameObject.SetActive(false);
     }
