@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 public class CharacterShooting : MonoBehaviour
 {
@@ -9,7 +6,7 @@ public class CharacterShooting : MonoBehaviour
     [SerializeField] private Animator _characterAnimator;
 
     [SerializeField] private CharacterMovement _characterMovement;
-    public float _shootingDistance;
+    public float ShootingDistance;
 
     private ObjectPool _objectPool;
 
@@ -20,25 +17,30 @@ public class CharacterShooting : MonoBehaviour
     }
 
     [HideInInspector]
-    public AttackMode _attackMode;
+    public AttackMode attackMode;
 
     [SerializeField] private float _timeBetweenAttacks;
     private float _generalTime;
 
-    [SerializeField] private float _projectileAmount, _projectileOffset, _projectileSpeed, _projectileDeathTime;
+    [SerializeField] private float  _projectileOffset, _projectileSpeed, _projectileDeathTime;
+
+    [SerializeField] private int _projectileAmount;
 
 
     private Vector3 _closestEnemyPosition = Vector3.zero;
     private Vector3 _previousEnemyPosition = Vector3.zero;
 
 
-   [HideInInspector] public bool _enemyInSight = false;
+    [HideInInspector] public bool EnemyInSight = false;
+
+
 
     private void Start()
     {
         _objectPool = GetComponent<ObjectPool>();
+        _objectPool.CreatePool(_projectileAmount);
 
-        _attackMode = AttackMode.Idle;
+        attackMode = AttackMode.Idle;
     }
 
 
@@ -52,12 +54,12 @@ public class CharacterShooting : MonoBehaviour
 
     private void Shooting()
     {
-        if(_attackMode == AttackMode.Attack)
+        if (attackMode == AttackMode.Attack)
         {
-            if (_enemyInSight)
+            if (EnemyInSight)
             {
                 //rotate character towards the enemy
-                _characterMovement._rotateToEnemy = true;
+                _characterMovement.RotateToEnemy = true;
                 _characterMovement.RotateCharacter(-_closestEnemyPosition);
 
                 //shooting projectiles
@@ -69,12 +71,12 @@ public class CharacterShooting : MonoBehaviour
             }
             else
             {
-                _characterMovement._rotateToEnemy = false;
+                _characterMovement.RotateToEnemy = false;
             }
         }
         else
         {
-            _characterMovement._rotateToEnemy = false;
+            _characterMovement.RotateToEnemy = false;
         }
     }
 
@@ -86,7 +88,7 @@ public class CharacterShooting : MonoBehaviour
 
         if (_closestEnemyPosition.magnitude == 0 || dist.magnitude < d.magnitude)
         {
-            _enemyInSight = true;
+            EnemyInSight = true;
 
             _closestEnemyPosition = dist;
             _previousEnemyPosition = enemyPosition;
@@ -119,7 +121,7 @@ public class CharacterShooting : MonoBehaviour
 
     public void EnterAttackMode()
     {
-        _attackMode = AttackMode.Attack;
+        attackMode = AttackMode.Attack;
 
         _gun.SetActive(true);
         _characterAnimator.SetLayerWeight(1, 1);
@@ -128,8 +130,8 @@ public class CharacterShooting : MonoBehaviour
 
 
     public void ExitAttackMode()
-    {       
-        _attackMode = AttackMode.Idle;
+    {
+        attackMode = AttackMode.Idle;
 
         _gun.SetActive(false);
         _characterAnimator.SetLayerWeight(1, 0);

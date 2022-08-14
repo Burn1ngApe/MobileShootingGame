@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -12,7 +9,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float _moveSpeed, _rotationSpeed;
     [SerializeField] private Animator _characterAnimator;
 
-    [HideInInspector] public bool _rotateToEnemy = false;
+    [HideInInspector] public bool RotateToEnemy = false;
 
 
 
@@ -31,7 +28,7 @@ public class CharacterMovement : MonoBehaviour
 
         if (_joystick.Horizontal != 0 || _joystick.Vertical != 0)
         {
-            if (!_rotateToEnemy) RotateCharacter(movement);
+            if (!RotateToEnemy) RotateCharacter(movement);
             _characterAnimator.SetTrigger("Running");
         }
         else

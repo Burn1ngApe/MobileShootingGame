@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Body : MonoBehaviour
+public abstract class Health : MonoBehaviour
 {
     [SerializeField] protected float _health = 0.0f;
     protected float _healthAtStart;
@@ -12,5 +10,10 @@ public class Body : MonoBehaviour
     public virtual void TakeDamage(float damage)
     {
         _health -= damage;
+        if(_health < 0) { Dead(); }
     }
+
+
+    public abstract void Dead();
+
 }

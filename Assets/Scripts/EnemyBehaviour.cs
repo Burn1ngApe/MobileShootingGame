@@ -1,7 +1,6 @@
 using UnityEngine;
-using Zenject;
 
-public class EnemyBehaviour : Body, IEnemy
+public class EnemyBehaviour : Enemy
 {
     [SerializeField] private int _gemDropChance;
     [SerializeField] private GameObject _gemInstance;
@@ -10,11 +9,10 @@ public class EnemyBehaviour : Body, IEnemy
 
     [SerializeField] private LayerMask _playerLM;
 
-    [HideInInspector] public GameObject _player;
+    [HideInInspector] public GameObject Player;
     
-    [HideInInspector] public CharacterController _characterController;
-    [HideInInspector] public CharacterShooting _characterShooting;
-
+    [HideInInspector] public CharacterController CharacterController;
+    [HideInInspector] public CharacterShooting CharacterShooting;
 
     private Rigidbody _rb;
 
@@ -23,6 +21,7 @@ public class EnemyBehaviour : Body, IEnemy
     [SerializeField] private float _timeBetweenAttacks, _minDamage, _maxDamage;
     
 
+
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
@@ -30,10 +29,9 @@ public class EnemyBehaviour : Body, IEnemy
 
 
 
-
     private void Update()
     {
-        var toPlayerDir = _player.transform.position - transform.position;
+        var toPlayerDir = Player.transform.position - transform.position;
 
         AngerPlayer(toPlayerDir);
 
@@ -44,9 +42,9 @@ public class EnemyBehaviour : Body, IEnemy
 
     private void AngerPlayer(Vector3 toPlayerDir)
     {
-        if (Physics.CheckSphere(transform.position, _characterShooting._shootingDistance, _playerLM))
+        if (Physics.CheckSphere(transform.position, CharacterShooting.ShootingDistance, _playerLM))
         {
-            _characterShooting.AngerPlayer(toPlayerDir, transform.position);
+            CharacterShooting.AngerPlayer(toPlayerDir, transform.position);
         }
     }
 
@@ -74,7 +72,7 @@ public class EnemyBehaviour : Body, IEnemy
         _anim.SetTrigger("Running");
 
         //rotate enemy towards player
-        var rot = Quaternion.LookRotation(_player.transform.position - transform.position);
+        var rot = Quaternion.LookRotation(Player.transform.position - transform.position);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 250 * Time.deltaTime);
 
         //move enemy towards player
@@ -92,26 +90,15 @@ public class EnemyBehaviour : Body, IEnemy
 
             float randomDamage = Random.Range(_minDamage, _maxDamage);
 
-            _characterController.TakeDamage(randomDamage);
+            CharacterController.TakeDamage(randomDamage);
         }
     }
 
-
-
-    public void SendDamage(float damage)
-    {
-        TakeDamage(damage);
-    }
 
 
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
-
-        if (_health <= 0)
-        {
-            Death();
-        }
     }
 
 
@@ -132,10 +119,12 @@ public class EnemyBehaviour : Body, IEnemy
 
 
 
-    private void Death()
+    public override void Dead()
     {
-        _characterShooting._enemyInSight = false;
+        CharacterShooting.EnemyInSight = false;
         DropGem();
         Destroy(gameObject);
     }
+
+
 }

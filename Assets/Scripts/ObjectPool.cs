@@ -1,27 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
 {
-    public Queue<GameObject> _objectPool = new Queue<GameObject>();
-    public GameObject _objectToPool;
-    public int _poolSize;
-
-
-
-    private void Start()
-    {
-        CreatePool();
-    }
-
+    public Queue<GameObject> objectPool = new Queue<GameObject>();
+    public GameObject ObjectToPool;
 
 
     public void CleanPool()
     {
-        if (_objectPool.Count != 0)
+        if (objectPool.Count != 0)
         {
-            foreach (var obj in _objectPool)
+            foreach (var obj in objectPool)
             {
                 obj.SetActive(false);
             }
@@ -30,14 +20,14 @@ public class ObjectPool : MonoBehaviour
 
 
 
-    private void CreatePool()
+    public void CreatePool(int poolSize)
     {
-        for (int i = 0; i < _poolSize; i++)
+        for (int i = 0; i < poolSize; i++)
         {
-            var newObject = Instantiate(_objectToPool);
+            var newObject = Instantiate(ObjectToPool);
             newObject.SetActive(false);
 
-            _objectPool.Enqueue(newObject);
+            objectPool.Enqueue(newObject);
         }
     }
 
@@ -45,13 +35,13 @@ public class ObjectPool : MonoBehaviour
 
     public GameObject GetObjectFromPool(Vector3 pos, Quaternion rot, float force)
     {
-        var objectToGet = _objectPool.Dequeue();
+        var objectToGet = objectPool.Dequeue();
 
         objectToGet.SetActive(true);
 
         objectToGet.GetComponent<ISpawnable>().SpawnObject(pos, rot, force);
 
-        _objectPool.Enqueue(objectToGet);
+        objectPool.Enqueue(objectToGet);
 
         return objectToGet;
 

@@ -1,20 +1,22 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
 
-public class EnemyFactory : MonoBehaviour
+public class EnemyFactory : MonoBehaviour, IObserver
 {
     [SerializeField] private float _amountOfEnemies;
-    [SerializeField] public GameObject _enemyPrefab;
+    [SerializeField] public GameObject EnemyPrefab;
 
     [Inject]
     private CharacterController _characterController;
 
 
     [HideInInspector]
-    public List<GameObject> _spawnedEnemies = new List<GameObject>();
+    public List<GameObject> SpawnedEnemies = new List<GameObject>();
+
+    [Inject]
+    private UIController _uiController;
 
 
 
@@ -32,10 +34,10 @@ public class EnemyFactory : MonoBehaviour
 
 
 
-
     private void Start()
     {
         SpawnEnemies();
+        _uiController.AddObserver(this);
     }
 
 
@@ -47,17 +49,17 @@ public class EnemyFactory : MonoBehaviour
             var randomPoint = GetRandomLocation();
             randomPoint.y = 1f;
 
-            var enemy = Instantiate(_enemyPrefab);
+            var enemy = Instantiate(EnemyPrefab);
             enemy.transform.position = randomPoint;
 
             var enemyBeh = enemy.GetComponent<EnemyBehaviour>();
 
-            enemyBeh._player = _characterController.gameObject;
-            enemyBeh._characterController = _characterController;
-            enemyBeh._characterShooting = _characterController._characterShooting;
+            enemyBeh.Player = _characterController.gameObject;
+            enemyBeh.CharacterController = _characterController;
+            enemyBeh.CharacterShooting = _characterController._characterShooting;
 
 
-            _spawnedEnemies.Add(enemy);
+            SpawnedEnemies.Add(enemy);
         }
     }
 
@@ -65,13 +67,20 @@ public class EnemyFactory : MonoBehaviour
 
     public void RespawnEnemies()
     {
-        foreach(var enemy in _spawnedEnemies)
+        foreach(var enemy in SpawnedEnemies)
         {
             Destroy(enemy);
         }
 
-        _spawnedEnemies.Clear();
+        SpawnedEnemies.Clear();
 
         SpawnEnemies();
+    }
+
+
+
+    public void UpdateData()
+    {
+        RespawnEnemies();
     }
 }

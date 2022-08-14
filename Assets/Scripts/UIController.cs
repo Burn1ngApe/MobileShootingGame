@@ -1,16 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
-public class UIController : MonoBehaviour
+public class UIController : MonoBehaviour, IObservable
 {
     [SerializeField] private GameObject _menu, _interface;
-    [SerializeField] private EnemyFactory _enemyGeneral;
-    [SerializeField] private CharacterController _player;
 
     public Button _exitMenuButton;
+
+    private List<IObserver> MyObservers = new List<IObserver>();
 
 
     public void EnterMenu()
@@ -33,8 +31,7 @@ public class UIController : MonoBehaviour
 
     public void RestartGame()
     {
-        _enemyGeneral.RespawnEnemies();
-        _player.ResetEverything();
+        NotifyObservers();
 
         _exitMenuButton.interactable = true;
         ExitMenu();
@@ -44,5 +41,29 @@ public class UIController : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+
+
+    public void AddObserver(IObserver observer)
+    {
+        MyObservers.Add(observer);
+    }
+
+
+
+    public void RemoveObserver(IObserver observer)
+    {
+        MyObservers.Remove(observer);
+    }
+
+
+
+    public void NotifyObservers()
+    {
+        foreach(var observer in MyObservers)
+        {
+            observer.UpdateData();
+        }
     }
 }

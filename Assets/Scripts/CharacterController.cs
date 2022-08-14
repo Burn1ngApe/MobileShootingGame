@@ -1,29 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class CharacterController : Body
+public class CharacterController : Health, IObserver
 {
     public CharacterShooting _characterShooting;
     [SerializeField] private CharacterMovement _characterMovement;
-
     [SerializeField] private GameObject _healthBarCanvas;
     [SerializeField] private Image _healthBarFill;
     [SerializeField] private TMP_Text _allGems;
 
-    [HideInInspector] public int _gemsCollected = 0, _generalAmountOfCollectedGems =0;
+    [HideInInspector] public int GemsCollected = 0, GeneralAmountOfCollectedGems =0;
 
     private Vector3 _startPosition;
     private Quaternion _startRotation;
 
-    [SerializeField] private UIController _uiController;
+    public UIController UiController;
 
 
 
     private void Start()
     {
+        UiController.AddObserver(this);
+
         _healthAtStart = _health;
 
         _startPosition = transform.position;
@@ -40,25 +39,21 @@ public class CharacterController : Body
         var healthForBar = 1f / _healthAtStart * damage;
         _healthBarFill.fillAmount -= healthForBar;
 
-        if (_health <= 0)
-        {
-            Death();
-        }
     }
 
 
 
-    private void Death()
+    public override void Dead()
     {
-        _uiController._exitMenuButton.interactable = false;
-        _uiController.EnterMenu();
+        UiController._exitMenuButton.interactable = false;
+        UiController.EnterMenu();
     }
 
 
 
     public void CollectGem()
     {
-        _gemsCollected++;
+        GemsCollected++;
     }
 
 
@@ -66,8 +61,8 @@ public class CharacterController : Body
     public void ResetEverything()
     {
         //reset gem amount
-        _gemsCollected = 0;
-        _generalAmountOfCollectedGems = 0;
+        GemsCollected = 0;
+        GeneralAmountOfCollectedGems = 0;
         _allGems.text = 0.ToString();
 
         //destroy spawned gems
@@ -83,11 +78,11 @@ public class CharacterController : Body
         _healthBarFill.fillAmount = 1;
 
         //exit attack mode
-        _characterShooting._attackMode = CharacterShooting.AttackMode.Idle;
+        _characterShooting.attackMode = CharacterShooting.AttackMode.Idle;
         _characterShooting.ExitAttackMode();
 
         //let player rotate by joystick input
-        _characterMovement._rotateToEnemy = false;
+        _characterMovement.RotateToEnemy = false;
 
         //reset player position
         gameObject.transform.position = _startPosition;
@@ -117,7 +112,7 @@ public class CharacterController : Body
     {
         _characterShooting.EnterAttackMode();
 
-        _gemsCollected = 0;
+        GemsCollected = 0;
     }
 
 
@@ -126,7 +121,14 @@ public class CharacterController : Body
     {
         _characterShooting.ExitAttackMode();
 
-        _generalAmountOfCollectedGems += _gemsCollected;
-        _allGems.text = _generalAmountOfCollectedGems.ToString();
+        GeneralAmountOfCollectedGems += GemsCollected;
+        _allGems.text = GeneralAmountOfCollectedGems.ToString();
+    }
+
+
+
+    public void UpdateData()
+    {
+        ResetEverything();
     }
 }

@@ -1,7 +1,5 @@
 using UnityEngine;
 using Zenject;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 public class NewInstaller : MonoInstaller<NewInstaller>
 {
@@ -11,9 +9,12 @@ public class NewInstaller : MonoInstaller<NewInstaller>
     public override void InstallBindings()
     {
         var _characterController = Container.InstantiatePrefabForComponent<CharacterController>(_playerPrefab, _spawnPoint.position, Quaternion.identity, null);
-
         Container
               .Bind<CharacterController>().FromInstance(_characterController).AsSingle();
+
+
+        var UiController = _characterController.UiController;
+        Container.Bind<UIController>().FromInstance(UiController).AsSingle();
     }
 
 }
