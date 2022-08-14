@@ -265,7 +265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _amountOfEnemies: 15
-  EnemyPrefab: {fileID: 4541404810489301175, guid: 90df6b43c399f4b4882505c7cc94500a,
+  EnemyPrefab: {fileID: 8349476243013164614, guid: 8debd386ab510734595593cd1362b553,
     type: 3}
   SpawnedEnemies: []
 --- !u!1 &137580321
@@ -405,8 +405,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aaf14357a039864d9837eecc358369f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnPoint: {fileID: 137580322}
-  _playerPrefab: {fileID: 1761149912553375014, guid: a5b199b5ac5ccc84493eecf98cbadcd9,
+  SpawnPoint: {fileID: 137580322}
+  PlayerPrefab: {fileID: 1761149912553375014, guid: a5b199b5ac5ccc84493eecf98cbadcd9,
     type: 3}
 --- !u!114 &677624797
 MonoBehaviour:

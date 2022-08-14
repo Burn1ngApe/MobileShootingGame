@@ -4,7 +4,17 @@ using Zenject;
 public class DetectPlayer : MonoBehaviour
 {
     [Inject]
+    private PlayerNestedClass _playerNested;
     private CharacterController _characterController;
+
+
+
+    private void Start()
+    {
+        _characterController = _playerNested.CharacterController;
+    }
+
+
 
     private void OnTriggerEnter(Collider other)
     {

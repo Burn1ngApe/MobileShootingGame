@@ -4,7 +4,7 @@ using TMPro;
 
 public class CharacterController : Health, IObserver
 {
-    public CharacterShooting _characterShooting;
+    public CharacterShooting characterShooting;
     [SerializeField] private CharacterMovement _characterMovement;
     [SerializeField] private GameObject _healthBarCanvas;
     [SerializeField] private Image _healthBarFill;
@@ -15,13 +15,13 @@ public class CharacterController : Health, IObserver
     private Vector3 _startPosition;
     private Quaternion _startRotation;
 
-    public UIController UiController;
+    public UIController uiController;
 
 
 
     private void Start()
     {
-        UiController.AddObserver(this);
+        uiController.AddObserver(this);
 
         _healthAtStart = _health;
 
@@ -45,8 +45,8 @@ public class CharacterController : Health, IObserver
 
     public override void Dead()
     {
-        UiController._exitMenuButton.interactable = false;
-        UiController.EnterMenu();
+        uiController.ExitMenuButton.interactable = false;
+        uiController.EnterMenu();
     }
 
 
@@ -78,8 +78,8 @@ public class CharacterController : Health, IObserver
         _healthBarFill.fillAmount = 1;
 
         //exit attack mode
-        _characterShooting.attackMode = CharacterShooting.AttackMode.Idle;
-        _characterShooting.ExitAttackMode();
+        characterShooting.attackMode = CharacterShooting.AttackMode.Idle;
+        characterShooting.ExitAttackMode();
 
         //let player rotate by joystick input
         _characterMovement.RotateToEnemy = false;
@@ -110,7 +110,7 @@ public class CharacterController : Health, IObserver
 
     public void CharacterOnEnemyField()
     {
-        _characterShooting.EnterAttackMode();
+        characterShooting.EnterAttackMode();
 
         GemsCollected = 0;
     }
@@ -119,7 +119,7 @@ public class CharacterController : Health, IObserver
 
     public void CharacterOnBase()
     {
-        _characterShooting.ExitAttackMode();
+        characterShooting.ExitAttackMode();
 
         GeneralAmountOfCollectedGems += GemsCollected;
         _allGems.text = GeneralAmountOfCollectedGems.ToString();

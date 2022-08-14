@@ -5,6 +5,8 @@ public class BulletBehaviour : MonoBehaviour, ISpawnable
     public float Damage;
     [SerializeField] private Rigidbody _rb;
 
+
+
     private void OnTriggerEnter(Collider other)
     {
 

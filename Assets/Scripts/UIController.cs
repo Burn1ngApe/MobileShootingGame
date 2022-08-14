@@ -6,9 +6,10 @@ public class UIController : MonoBehaviour, IObservable
 {
     [SerializeField] private GameObject _menu, _interface;
 
-    public Button _exitMenuButton;
+    public Button ExitMenuButton;
 
     private List<IObserver> MyObservers = new List<IObserver>();
+
 
 
     public void EnterMenu()
@@ -33,7 +34,7 @@ public class UIController : MonoBehaviour, IObservable
     {
         NotifyObservers();
 
-        _exitMenuButton.interactable = true;
+        ExitMenuButton.interactable = true;
         ExitMenu();
     }
 

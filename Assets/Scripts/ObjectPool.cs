@@ -3,15 +3,15 @@ using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
 {
-    public Queue<GameObject> objectPool = new Queue<GameObject>();
+    public Queue<GameObject> MyObjectPool = new Queue<GameObject>();
     public GameObject ObjectToPool;
 
 
     public void CleanPool()
     {
-        if (objectPool.Count != 0)
+        if (MyObjectPool.Count != 0)
         {
-            foreach (var obj in objectPool)
+            foreach (var obj in MyObjectPool)
             {
                 obj.SetActive(false);
             }
@@ -27,7 +27,7 @@ public class ObjectPool : MonoBehaviour
             var newObject = Instantiate(ObjectToPool);
             newObject.SetActive(false);
 
-            objectPool.Enqueue(newObject);
+            MyObjectPool.Enqueue(newObject);
         }
     }
 
@@ -35,13 +35,13 @@ public class ObjectPool : MonoBehaviour
 
     public GameObject GetObjectFromPool(Vector3 pos, Quaternion rot, float force)
     {
-        var objectToGet = objectPool.Dequeue();
+        var objectToGet = MyObjectPool.Dequeue();
 
         objectToGet.SetActive(true);
 
         objectToGet.GetComponent<ISpawnable>().SpawnObject(pos, rot, force);
 
-        objectPool.Enqueue(objectToGet);
+        MyObjectPool.Enqueue(objectToGet);
 
         return objectToGet;
 

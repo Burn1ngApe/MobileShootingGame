@@ -9,14 +9,13 @@ public class EnemyFactory : MonoBehaviour, IObserver
     [SerializeField] public GameObject EnemyPrefab;
 
     [Inject]
-    private CharacterController _characterController;
+    private PlayerNestedClass _playerNestedClass;
 
+    private CharacterController _characterController;
+    private UIController _uiController;
 
     [HideInInspector]
     public List<GameObject> SpawnedEnemies = new List<GameObject>();
-
-    [Inject]
-    private UIController _uiController;
 
 
 
@@ -36,6 +35,10 @@ public class EnemyFactory : MonoBehaviour, IObserver
 
     private void Start()
     {
+        _characterController = _playerNestedClass.CharacterController;
+        _uiController = _playerNestedClass.UIController;
+
+
         SpawnEnemies();
         _uiController.AddObserver(this);
     }
@@ -56,7 +59,7 @@ public class EnemyFactory : MonoBehaviour, IObserver
 
             enemyBeh.Player = _characterController.gameObject;
             enemyBeh.CharacterController = _characterController;
-            enemyBeh.CharacterShooting = _characterController._characterShooting;
+            enemyBeh.CharacterShooting = _characterController.characterShooting;
 
 
             SpawnedEnemies.Add(enemy);

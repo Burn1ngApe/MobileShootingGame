@@ -10,7 +10,7 @@ public class EnemyBehaviour : Enemy
     [SerializeField] private LayerMask _playerLM;
 
     [HideInInspector] public GameObject Player;
-    
+
     [HideInInspector] public CharacterController CharacterController;
     [HideInInspector] public CharacterShooting CharacterShooting;
 
@@ -19,7 +19,7 @@ public class EnemyBehaviour : Enemy
     [SerializeField] private Animator _anim;
     private float _generalTime = 0.0f;
     [SerializeField] private float _timeBetweenAttacks, _minDamage, _maxDamage;
-    
+
 
 
     private void Start()
@@ -81,17 +81,18 @@ public class EnemyBehaviour : Enemy
 
 
 
-    private void AttackPlayer()
+    public void AttackPlayer()
     {
-        if (Time.time > _generalTime)
-        {
-            _generalTime = Time.time + _timeBetweenAttacks;
-            _anim.SetTrigger("Throw");
+        _anim.SetTrigger("Throw");
+    }
 
-            float randomDamage = Random.Range(_minDamage, _maxDamage);
 
-            CharacterController.TakeDamage(randomDamage);
-        }
+
+    public void DeliverDamage()
+    {
+        float randomDamage = Random.Range(_minDamage, _maxDamage);
+
+        CharacterController.TakeDamage(randomDamage);
     }
 
 
@@ -125,6 +126,4 @@ public class EnemyBehaviour : Enemy
         DropGem();
         Destroy(gameObject);
     }
-
-
 }
